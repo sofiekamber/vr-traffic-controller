@@ -71,7 +71,7 @@ public class carGenerator : MonoBehaviour
         int spawn = r.Next(0, spawnPointsAndPaths.Count);
         int path = r.Next(0, spawnPointsAndPaths[spawn].paths.Count);
 
-        GameObject newCar = Instantiate(carPrefab, spawnPointsAndPaths[spawn].spawnPoint);
+        GameObject newCar = Instantiate(carPrefab, spawnPointsAndPaths[spawn].spawnPoint.transform.position, Quaternion.Euler(0f, -90f*spawn, 0f));
         carAI newCarClass = newCar.GetComponent<carAI>();
         newCarClass.path = spawnPointsAndPaths[spawn].paths[path];
     }
