@@ -644,6 +644,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd1dab33ca305417ea97fe1d8739cd65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  path: {fileID: 0}
   maxSteerAngle: 40
   centerOfMass: {x: 0, y: 0, z: 0}
   wheels:
@@ -659,7 +660,7 @@ MonoBehaviour:
   - model: {fileID: 4975941092268596247}
     collider: {fileID: 7380610504186526429}
     axel: 0
-  paths: []
+  carModel: {fileID: 1149428328801626304}
 --- !u!1 &7380610503649450670
 GameObject:
   m_ObjectHideFlags: 0

@@ -28,6 +28,8 @@ public class carAI : MonoBehaviour
     Vector3 centerOfMass;
     [SerializeField]
     List<Wheel> wheels;
+    [SerializeField]
+    GameObject carModel;
 
     Rigidbody carRB;
 
@@ -50,6 +52,17 @@ public class carAI : MonoBehaviour
         //Set center of mass for better physics (prevent flipping)
         carRB = GetComponent<Rigidbody>();
         carRB.centerOfMass = centerOfMass;
+
+        ChooseRandomColor();
+    }
+
+    private void ChooseRandomColor()
+    {
+        Material[] materials = carModel.GetComponent<MeshRenderer>().materials;
+        // HSV: choose saturation in the upper half, not too bright
+        materials[2].color = UnityEngine.Random.ColorHSV(0f, 1f, 0.5f, 1f, 0f, 0.75f);
+        // we have to reassign the whole array
+        carModel.GetComponent<MeshRenderer>().materials = materials;
     }
 
     void FixedUpdate()
