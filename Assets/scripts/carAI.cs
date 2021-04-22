@@ -18,9 +18,26 @@ public struct Wheel
     public Axel axel;
 }
 
+public enum Direction
+{
+    Straight,
+    Right,
+    Left
+}
+
+[Serializable]
+public struct Blinker
+{
+    public GameObject modelRight;
+    public GameObject modelLeft;
+    public Material materialOn;
+    public Material materialOff;
+}
+
 public class carAI : MonoBehaviour
 {
     public Transform path;
+    public Direction direction;
 
     [SerializeField]
     float maxSteerAngle = 40.0f;
@@ -30,12 +47,17 @@ public class carAI : MonoBehaviour
     List<Wheel> wheels;
     [SerializeField]
     GameObject carModel;
+    [SerializeField]
+    Blinker blinker;
 
     Rigidbody carRB;
 
     List<Transform> nodes;
     int chosenPath;
     int currentNode = 0;
+
+    float blinkTime = 0;
+    bool isBlinkerOn = false;
 
     void Start()
     {
@@ -56,6 +78,34 @@ public class carAI : MonoBehaviour
         ChooseRandomColor();
     }
 
+    void FixedUpdate()
+    {
+        wheelTurn();
+        wheelRotation();
+        moveCar();
+        checkWaypoins();
+        Blink();
+    }
+
+    private void Blink()
+    {
+        // switch material in a certain rate
+        if (blinkTime >= 0.5f)
+        {
+            Material otherMaterial = isBlinkerOn ? blinker.materialOff : blinker.materialOn;
+            if (direction == Direction.Left)
+            {
+                blinker.modelLeft.GetComponent<Renderer>().material = otherMaterial;
+            } else if (direction == Direction.Right)
+            {
+                blinker.modelRight.GetComponent<Renderer>().material = otherMaterial;
+            }
+            isBlinkerOn = !isBlinkerOn;
+            blinkTime = 0;
+        }
+        blinkTime += Time.deltaTime;
+    }
+
     private void ChooseRandomColor()
     {
         Material[] materials = carModel.GetComponent<MeshRenderer>().materials;
@@ -63,14 +113,6 @@ public class carAI : MonoBehaviour
         materials[2].color = UnityEngine.Random.ColorHSV(0f, 1f, 0.5f, 1f, 0f, 0.75f);
         // we have to reassign the whole array
         carModel.GetComponent<MeshRenderer>().materials = materials;
-    }
-
-    void FixedUpdate()
-    {
-        wheelTurn();
-        wheelRotation();
-        moveCar();
-        checkWaypoins();
     }
 
     void wheelTurn()
