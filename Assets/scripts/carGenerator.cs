@@ -54,12 +54,7 @@ public class carGenerator : MonoBehaviour
 
                 //check for spawn
                 if (r.Next(0, 101) < spawnChancePercentPerSecond)
-                {
-                    timeCounter = 0f;
-                    checkCounter = 0;
                     return true;
-                }
-
             }
         }
 
@@ -69,11 +64,36 @@ public class carGenerator : MonoBehaviour
     void spawnCar()
     {
         int spawn = r.Next(0, spawnPointsAndPaths.Count);
-        int path = r.Next(0, spawnPointsAndPaths[spawn].paths.Count);
 
-        GameObject newCar = Instantiate(carPrefab, spawnPointsAndPaths[spawn].spawnPoint.transform.position, Quaternion.Euler(0f, -90f*spawn, 0f));
-        carAI newCarClass = newCar.GetComponent<carAI>();
-        newCarClass.path = spawnPointsAndPaths[spawn].paths[path];
-        newCarClass.direction = (Direction) path;
+        if (!checkCollision(spawnPointsAndPaths[spawn].spawnPoint.transform.position, 4f))
+        {
+            //only spawn when no collision is detected
+            int path = r.Next(0, spawnPointsAndPaths[spawn].paths.Count);
+
+            //create new car
+            GameObject newCar = Instantiate(carPrefab, spawnPointsAndPaths[spawn].spawnPoint.transform.position, Quaternion.Euler(0f, -90f * spawn, 0f));
+            carAI newCarClass = newCar.GetComponent<carAI>();
+            newCarClass.path = spawnPointsAndPaths[spawn].paths[path];
+            newCarClass.direction = (Direction)path;
+
+            //reset spawn counter
+            timeCounter = 0f;
+            checkCounter = 0;
+        }
+    }
+
+    bool checkCollision(Vector3 position, float radius)
+    {
+        //get all colliding objects at spawn with certain radius 
+        Collider[] hitColliders = Physics.OverlapSphere(position, radius);
+
+        foreach (var hitCollider in hitColliders)
+        {
+            //check if collision object is a car
+            if (hitCollider.gameObject.name == "chassis_Cube")
+                return true;
+        }
+
+        return false;
     }
 }
