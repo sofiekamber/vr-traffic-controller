@@ -50,6 +50,14 @@
       "type": "boolean"
     },
     {
+      "name": "/actions/default/in/CarsGO",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/default/in/CarsSTOP",
+      "type": "boolean"
+    },
+    {
       "name": "/actions/default/out/Haptic",
       "type": "vibration"
     },

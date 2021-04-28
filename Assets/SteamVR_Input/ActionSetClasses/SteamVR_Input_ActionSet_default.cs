@@ -105,6 +105,22 @@ namespace Valve.VR
             }
         }
         
+        public virtual SteamVR_Action_Boolean CarsGO
+        {
+            get
+            {
+                return SteamVR_Actions.default_CarsGO;
+            }
+        }
+        
+        public virtual SteamVR_Action_Boolean CarsSTOP
+        {
+            get
+            {
+                return SteamVR_Actions.default_CarsSTOP;
+            }
+        }
+        
         public virtual SteamVR_Action_Vibration Haptic
         {
             get

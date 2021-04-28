@@ -1,18 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
 
 public class userInputVIVE : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    private userAction _userAction;
 
-    // Update is called once per frame
+    public SteamVR_Action_Boolean Go_Cars = SteamVR_Input.GetAction<SteamVR_Action_Boolean>("default", "CarsGO");
+    public SteamVR_Action_Boolean Stop_Cars = SteamVR_Input.GetAction<SteamVR_Action_Boolean>("default", "CarsSTOP");
     void Update()
     {
-        
+        if (Go_Cars.GetState(SteamVR_Input_Sources.Any))
+        {
+            _userAction.UpGo();
+        }
+
+        if (Stop_Cars.GetState(SteamVR_Input_Sources.Any))
+        {
+            _userAction.UpStop();
+        }
     }
 }
