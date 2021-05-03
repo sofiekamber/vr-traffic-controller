@@ -6,28 +6,79 @@ using Valve.VR;
 public class userInputVIVE : MonoBehaviour
 {
     [SerializeField]
-    private userAction _userAction;
+    private userAction _userAction; // take the actions we already defined
 
-    public SteamVR_Action_Boolean Go_Cars = SteamVR_Input.GetAction<SteamVR_Action_Boolean>("default", "CarsGO");
-    public SteamVR_Action_Boolean Stop_Cars = SteamVR_Input.GetAction<SteamVR_Action_Boolean>("default", "CarsSTOP");
+    
+    [SerializeField]
+    GameObject controllerLeft; //left hand will be for stop+go
 
     [SerializeField]
-    GameObject contrleft;
- 
+    GameObject controllerRight; // right hand will be for direction
+
     void Update()
 
     {
-        Vector3 posHMD = contrleft.transform.position;
-        Debug.Log(posHMD);
+        Vector3 posControllerLeft = controllerLeft.transform.position; // get the postion of the left controller
 
-        if (Go_Cars.GetState(SteamVR_Input_Sources.Any))
+        Quaternion rotControllerRight = controllerRight.transform.rotation; // get the rotation of the right controller, has to be Quaternion
+
+        // for rotation see https://answers.unity.com/questions/1332337/how-do-i-get-accurate-steamvr-vive-controller-x-ax.html
+       
+        // convert to euler
+
+        float rotControllerRightEuler = (rotControllerRight.y + 1) * 180;
+
+
+        //Debug.Log(posControllerLeft.y);
+        //Debug.Log(rotControllerRightEuler);
+       
+
+        // for now: if controller is raised above 1.8m, the cars go, if lowered below 0.4m they stop 
+        // direction: took some angles that seemed to make sense for the direction. needs some testing
+
+        // Up Lane
+        if (posControllerLeft.y > 1.8 && rotControllerRightEuler > 150 && rotControllerRightEuler < 210)
         {
-            _userAction.UpGo();
+              _userAction.UpGo();
         }
 
-        if (Stop_Cars.GetState(SteamVR_Input_Sources.Any))
+        if (posControllerLeft.y < 0.4 && rotControllerRightEuler > 150 && rotControllerRightEuler < 210)
         {
             _userAction.UpStop();
         }
+
+        // Right Lane
+        if (posControllerLeft.y > 1.8 && rotControllerRightEuler > 240 && rotControllerRightEuler < 300)
+        {
+            _userAction.RightGo();
+        }
+
+        if (posControllerLeft.y < 0.4 && rotControllerRightEuler > 240 && rotControllerRightEuler < 300)
+        {
+            _userAction.RightStop();
+        }
+
+        // Down Lane (values for rotation between 330 and 30)
+        if (posControllerLeft.y > 1.8 && (rotControllerRightEuler > 330 && rotControllerRightEuler < 0 || rotControllerRightEuler > 0 && rotControllerRightEuler < 30))
+        {
+            _userAction.DownGo();
+        }
+
+        if (posControllerLeft.y < 0.4 && (rotControllerRightEuler > 330 && rotControllerRightEuler < 0 || rotControllerRightEuler > 0 && rotControllerRightEuler < 30))
+        {
+            _userAction.DownStop();
+        }
+
+        // Left Lane
+        if (posControllerLeft.y > 1.8 && rotControllerRightEuler > 60 && rotControllerRightEuler < 120)
+        {
+            _userAction.LeftGo();
+        }
+
+        if (posControllerLeft.y < 0.4 && rotControllerRightEuler > 60 && rotControllerRightEuler < 120)
+        {
+            _userAction.LeftStop();
+        }
+
     }
 }
