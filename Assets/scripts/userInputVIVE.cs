@@ -59,12 +59,12 @@ public class userInputVIVE : MonoBehaviour
         }
 
         // Down Lane (values for rotation between 330 and 30)
-        if (posControllerLeft.y > 1.8 && (rotControllerRightEuler > 330 && rotControllerRightEuler < 0 || rotControllerRightEuler > 0 && rotControllerRightEuler < 30))
+        if (posControllerLeft.y > 1.8 && (rotControllerRightEuler > 330 && rotControllerRightEuler < 360 || rotControllerRightEuler > 0 && rotControllerRightEuler < 30))
         {
             _userAction.DownGo();
         }
 
-        if (posControllerLeft.y < 0.4 && (rotControllerRightEuler > 330 && rotControllerRightEuler < 0 || rotControllerRightEuler > 0 && rotControllerRightEuler < 30))
+        if (posControllerLeft.y < 0.4 && (rotControllerRightEuler > 330 && rotControllerRightEuler < 360 || rotControllerRightEuler > 0 && rotControllerRightEuler < 30))
         {
             _userAction.DownStop();
         }
