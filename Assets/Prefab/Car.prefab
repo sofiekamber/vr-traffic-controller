@@ -760,7 +760,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   path: {fileID: 0}
   direction: 0
-  maxSteerAngle: 50
+  maxSteerAngle: 40
   centerOfMass: {x: 0, y: 0, z: 0}
   wheels:
   - model: {fileID: 4763930352370154038}

@@ -9,7 +9,14 @@ using Random = System.Random;
 public struct spawnAndPaths
 {
     public Transform spawnPoint;
-    public List<Transform> paths;
+    public List<Path> paths;
+}
+
+[Serializable]
+public struct Path
+{
+    public Transform path_transform;
+    public float intersectionMaxSpeed;
 }
 
 public class carGenerator : MonoBehaviour
@@ -65,7 +72,9 @@ public class carGenerator : MonoBehaviour
     {
         int spawn = r.Next(0, spawnPointsAndPaths.Count);
 
-        if (!checkCollision(spawnPointsAndPaths[spawn].spawnPoint.transform.position, 4f))
+        spawn = 2; //Testing: Always take spawn3
+
+        if (!checkSpawnCollision(spawnPointsAndPaths[spawn].spawnPoint.transform.position, 4f))
         {
             //only spawn when no collision is detected
             int path = r.Next(0, spawnPointsAndPaths[spawn].paths.Count);
@@ -73,8 +82,10 @@ public class carGenerator : MonoBehaviour
             //create new car
             GameObject newCar = Instantiate(carPrefab, spawnPointsAndPaths[spawn].spawnPoint.transform.position, Quaternion.Euler(0f, -90f * spawn, 0f));
             carAI newCarClass = newCar.GetComponent<carAI>();
-            newCarClass.path = spawnPointsAndPaths[spawn].paths[path];
+            //set car variables
+            newCarClass.path = spawnPointsAndPaths[spawn].paths[path].path_transform;
             newCarClass.direction = (Direction)path;
+            newCarClass.intersectionMaxSpeed = spawnPointsAndPaths[spawn].paths[path].intersectionMaxSpeed;
 
             //reset spawn counter
             timeCounter = 0f;
@@ -82,7 +93,7 @@ public class carGenerator : MonoBehaviour
         }
     }
 
-    bool checkCollision(Vector3 position, float radius)
+    bool checkSpawnCollision(Vector3 position, float radius)
     {
         //get all colliding objects at spawn with certain radius 
         Collider[] hitColliders = Physics.OverlapSphere(position, radius);

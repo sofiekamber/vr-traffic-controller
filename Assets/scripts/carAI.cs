@@ -38,9 +38,17 @@ public class carAI : MonoBehaviour
 {
     public Transform path;
     public Direction direction;
+    public float crossingMaxSpeed;
 
     [SerializeField]
     float maxSteerAngle = 40.0f;
+    [SerializeField]
+    float maxVelocity = 50.0f;
+    [SerializeField]
+    int brakingStrenght = 100000; //just some random try and error number
+    [SerializeField]
+    int accelerationStrenght = 10000; //just some random try and error number
+
     [SerializeField]
     Vector3 centerOfMass;
     [SerializeField]
@@ -78,32 +86,13 @@ public class carAI : MonoBehaviour
         ChooseRandomColor();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         wheelTurn();
         wheelRotation();
         moveCar();
         checkWaypoins();
         Blink();
-    }
-
-    private void Blink()
-    {
-        // switch material in a certain rate
-        if (blinkTime >= 0.5f)
-        {
-            Material otherMaterial = isBlinkerOn ? blinker.materialOff : blinker.materialOn;
-            if (direction == Direction.Left)
-            {
-                blinker.modelLeft.GetComponent<Renderer>().material = otherMaterial;
-            } else if (direction == Direction.Right)
-            {
-                blinker.modelRight.GetComponent<Renderer>().material = otherMaterial;
-            }
-            isBlinkerOn = !isBlinkerOn;
-            blinkTime = 0;
-        }
-        blinkTime += Time.deltaTime;
     }
 
     private void ChooseRandomColor()
@@ -115,7 +104,7 @@ public class carAI : MonoBehaviour
         carModel.GetComponent<MeshRenderer>().materials = materials;
     }
 
-    void wheelTurn()
+    private void wheelTurn()
     {
         //get vector between car position and target node
         Vector3 relativeVector = transform.InverseTransformPoint(nodes[currentNode].position);
@@ -131,7 +120,7 @@ public class carAI : MonoBehaviour
         }
     }
 
-    void wheelRotation()
+    private void wheelRotation()
     {
         //set rotation for all wheels
         foreach (var wheel in wheels)
@@ -148,14 +137,61 @@ public class carAI : MonoBehaviour
         }
     }
 
-    void moveCar()
+    private void moveCar()
     {
+        //get torque
+        float torque = getTorque();
+
         //set torque of each wheel
         foreach (var wheel in wheels)
-            wheel.collider.motorTorque = 10000 * Time.deltaTime;
+        {
+            if(torque > 0)
+            {
+                //accelerate
+                wheel.collider.motorTorque = torque;
+                wheel.collider.brakeTorque = 0;
+            }
+            else
+            {
+                //brake
+                wheel.collider.motorTorque = 0;
+                wheel.collider.brakeTorque = torque * -1;
+            }
+        }
+            
     }
 
-    void checkWaypoins()
+    private float getTorque()
+    {
+        float carVelocity = carRB.velocity.magnitude * 3.6f;
+
+        //check if there is another car in front of me
+        Vector3 forwardVector = transform.rotation * Vector3.forward;
+        RaycastHit hit;
+        Ray forwardRay = new Ray(transform.position, forwardVector);
+
+        if (Physics.Raycast(forwardRay, out hit))
+        {
+            //calculate relative velocity in m/s between car in front and myself
+            float relativeVelocity = carRB.velocity.magnitude - hit.rigidbody.velocity.magnitude;
+
+            //calculate braking distance (speed in km/h / 10)^2 - according to my VKU ;)
+            float brakingDistance = (float)Math.Pow(((relativeVelocity * 3.6f) / 10), 2);
+
+            //we want a security distance, so we add some value to the brakingDistance
+            if(brakingDistance + 10 >= hit.distance)
+                return -brakingStrenght * Time.deltaTime;
+        }
+
+        //check max speed limit
+        if (carVelocity > maxVelocity)
+            return 0;
+
+        return accelerationStrenght * Time.deltaTime;
+    }
+
+
+    private void checkWaypoins()
     {
         if(Vector3.Distance(transform.position, nodes[currentNode].position) < 1f)
         {
@@ -167,5 +203,25 @@ public class carAI : MonoBehaviour
                 Destroy(this.gameObject);
                
         }
+    }
+
+    private void Blink()
+    {
+        // switch material in a certain rate
+        if (blinkTime >= 0.5f)
+        {
+            Material otherMaterial = isBlinkerOn ? blinker.materialOff : blinker.materialOn;
+            if (direction == Direction.Left)
+            {
+                blinker.modelLeft.GetComponent<Renderer>().material = otherMaterial;
+            }
+            else if (direction == Direction.Right)
+            {
+                blinker.modelRight.GetComponent<Renderer>().material = otherMaterial;
+            }
+            isBlinkerOn = !isBlinkerOn;
+            blinkTime = 0;
+        }
+        blinkTime += Time.deltaTime;
     }
 }
