@@ -38,7 +38,7 @@ public class carAI : MonoBehaviour
 {
     public Transform path;
     public Direction direction;
-    public float crossingMaxSpeed;
+    public float intersectionMaxSpeed;
 
     [SerializeField]
     float maxSteerAngle = 40.0f;
@@ -86,7 +86,7 @@ public class carAI : MonoBehaviour
         ChooseRandomColor();
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
         wheelTurn();
         wheelRotation();
@@ -172,15 +172,35 @@ public class carAI : MonoBehaviour
 
         if (Physics.Raycast(forwardRay, out hit))
         {
-            //calculate relative velocity in m/s between car in front and myself
-            float relativeVelocity = carRB.velocity.magnitude - hit.rigidbody.velocity.magnitude;
+            if(hit.rigidbody != null)
+            {
+                //calculate relative velocity in m/s between car in front and myself
+                float relativeVelocity = carRB.velocity.magnitude - hit.rigidbody.velocity.magnitude;
 
-            //calculate braking distance (speed in km/h / 10)^2 - according to my VKU ;)
-            float brakingDistance = (float)Math.Pow(((relativeVelocity * 3.6f) / 10), 2);
+                //calculate braking distance (speed in km/h / 10)^2 - according to my VKU ;)
+                float brakingDistance = (float)Math.Pow(((relativeVelocity * 3.6f) / 10), 2);
 
-            //we want a security distance, so we add some value to the brakingDistance
-            if(brakingDistance + 10 >= hit.distance)
+                //we want a security distance, so we add some value to the brakingDistance
+                if (brakingDistance + 10 >= hit.distance)
+                    return -brakingStrenght * Time.deltaTime;
+            }
+        }
+
+        //check max speed for turning at the intersection
+        if(currentNode == 0 && carVelocity > intersectionMaxSpeed)
+        {
+            //get distance between first waypoint and actual position
+            float distance = Vector3.Distance(transform.position, nodes[currentNode].position);
+
+            //calculate breaking distance (did not find a formula for breaking not to zero,
+            //so just use the same formula here (feel free to improve :D ))
+            float brakingDistance = (float)Math.Pow(((carRB.velocity.magnitude * 3.6f) / 10), 2);
+
+            //but we dont add a security distance here
+            if (brakingDistance >= distance) {
+                Debug.Log("brake");
                 return -brakingStrenght * Time.deltaTime;
+            }
         }
 
         //check max speed limit

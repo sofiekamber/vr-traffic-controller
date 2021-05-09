@@ -72,8 +72,6 @@ public class carGenerator : MonoBehaviour
     {
         int spawn = r.Next(0, spawnPointsAndPaths.Count);
 
-        spawn = 2; //Testing: Always take spawn3
-
         if (!checkSpawnCollision(spawnPointsAndPaths[spawn].spawnPoint.transform.position, 4f))
         {
             //only spawn when no collision is detected
