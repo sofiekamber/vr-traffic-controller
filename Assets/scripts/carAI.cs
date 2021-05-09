@@ -73,8 +73,7 @@ public class carAI : MonoBehaviour
         Transform[] pathTransforms = path.GetComponentsInChildren<Transform>();
         nodes = new List<Transform>();
 
-        foreach (var pathTransform in pathTransforms)
-        {
+        foreach (var pathTransform in pathTransforms){
             if (pathTransform != path.transform)
                 nodes.Add(pathTransform);
         }
@@ -98,6 +97,7 @@ public class carAI : MonoBehaviour
     private void ChooseRandomColor()
     {
         Material[] materials = carModel.GetComponent<MeshRenderer>().materials;
+
         // HSV: choose saturation in the upper half, not too bright
         materials[2].color = UnityEngine.Random.ColorHSV(0f, 1f, 0.5f, 1f, 0f, 0.75f);
         // we have to reassign the whole array
@@ -112,8 +112,7 @@ public class carAI : MonoBehaviour
         //calculate desired steering angle
         float steerAngle = relativeVector.x / relativeVector.magnitude * maxSteerAngle;
 
-        foreach (var wheel in wheels)
-        {
+        foreach (var wheel in wheels){
             //set steering angle for front wheels (lerp for smooth transition)
             if (wheel.axel == Axel.Front)
                 wheel.collider.steerAngle = Mathf.Lerp(wheel.collider.steerAngle, steerAngle, 0.5f);
@@ -122,11 +121,11 @@ public class carAI : MonoBehaviour
 
     private void wheelRotation()
     {
+        Quaternion rotation;
+        Vector3 position;
+
         //set rotation for all wheels
-        foreach (var wheel in wheels)
-        {
-            Quaternion rotation;
-            Vector3 position;
+        foreach (var wheel in wheels){
 
             //luckily, the wheelcollider is doing all the work for us :).
             wheel.collider.GetWorldPose(out position, out rotation);
@@ -143,16 +142,13 @@ public class carAI : MonoBehaviour
         float torque = getTorque();
 
         //set torque of each wheel
-        foreach (var wheel in wheels)
-        {
-            if(torque > 0)
-            {
+        foreach (var wheel in wheels){
+            if(torque > 0){
                 //accelerate
                 wheel.collider.motorTorque = torque;
                 wheel.collider.brakeTorque = 0;
             }
-            else
-            {
+            else{
                 //brake
                 wheel.collider.motorTorque = 0;
                 wheel.collider.brakeTorque = torque * -1;
@@ -170,10 +166,9 @@ public class carAI : MonoBehaviour
         RaycastHit hit;
         Ray forwardRay = new Ray(transform.position, forwardVector);
 
-        if (Physics.Raycast(forwardRay, out hit))
-        {
-            if(hit.rigidbody != null)
-            {
+        if (Physics.Raycast(forwardRay, out hit)){
+            //hit has to have a rigidbody, otherwise ignore it
+            if(hit.rigidbody != null){
                 //calculate relative velocity in m/s between car in front and myself
                 float relativeVelocity = carRB.velocity.magnitude - hit.rigidbody.velocity.magnitude;
 
@@ -187,8 +182,7 @@ public class carAI : MonoBehaviour
         }
 
         //check max speed for turning at the intersection
-        if(currentNode == 0 && carVelocity > intersectionMaxSpeed)
-        {
+        if(currentNode == 0 && carVelocity > intersectionMaxSpeed){
             //get distance between first waypoint and actual position
             float distance = Vector3.Distance(transform.position, nodes[currentNode].position);
 
@@ -197,10 +191,8 @@ public class carAI : MonoBehaviour
             float brakingDistance = (float)Math.Pow(((carRB.velocity.magnitude * 3.6f) / 10), 2);
 
             //but we dont add a security distance here
-            if (brakingDistance >= distance) {
-                Debug.Log("brake");
+            if (brakingDistance >= distance)
                 return -brakingStrenght * Time.deltaTime;
-            }
         }
 
         //check max speed limit
@@ -213,8 +205,7 @@ public class carAI : MonoBehaviour
 
     private void checkWaypoins()
     {
-        if(Vector3.Distance(transform.position, nodes[currentNode].position) < 1f)
-        {
+        if(Vector3.Distance(transform.position, nodes[currentNode].position) < 1f){
             if (currentNode != nodes.Count - 1)
                 //set next waypoint
                 currentNode++;
@@ -228,17 +219,14 @@ public class carAI : MonoBehaviour
     private void Blink()
     {
         // switch material in a certain rate
-        if (blinkTime >= 0.5f)
-        {
+        if (blinkTime >= 0.5f){
             Material otherMaterial = isBlinkerOn ? blinker.materialOff : blinker.materialOn;
+
             if (direction == Direction.Left)
-            {
                 blinker.modelLeft.GetComponent<Renderer>().material = otherMaterial;
-            }
             else if (direction == Direction.Right)
-            {
                 blinker.modelRight.GetComponent<Renderer>().material = otherMaterial;
-            }
+
             isBlinkerOn = !isBlinkerOn;
             blinkTime = 0;
         }

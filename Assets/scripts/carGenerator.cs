@@ -52,11 +52,9 @@ public class carGenerator : MonoBehaviour
         timeCounter += Time.deltaTime;
 
         //only spawn car if minimum Time between car spawn is exceeded
-        if (timeCounter > minTimeBetweenCars)
-        {
+        if (timeCounter > minTimeBetweenCars){
             //car spawn only occurs once per second
-            if ((timeCounter - minTimeBetweenCars) > checkCounter)
-            {
+            if ((timeCounter - minTimeBetweenCars) > checkCounter){
                 checkCounter++;
 
                 //check for spawn
@@ -72,8 +70,7 @@ public class carGenerator : MonoBehaviour
     {
         int spawn = r.Next(0, spawnPointsAndPaths.Count);
 
-        if (!checkSpawnCollision(spawnPointsAndPaths[spawn].spawnPoint.transform.position, 4f))
-        {
+        if (!checkSpawnCollision(spawnPointsAndPaths[spawn].spawnPoint.transform.position, 4f)){
             //only spawn when no collision is detected
             int path = r.Next(0, spawnPointsAndPaths[spawn].paths.Count);
 
@@ -96,8 +93,7 @@ public class carGenerator : MonoBehaviour
         //get all colliding objects at spawn with certain radius 
         Collider[] hitColliders = Physics.OverlapSphere(position, radius);
 
-        foreach (var hitCollider in hitColliders)
-        {
+        foreach (var hitCollider in hitColliders){
             //check if collision object is a car
             if (hitCollider.gameObject.name == "chassis_Cube")
                 return true;
