@@ -79,6 +79,7 @@ public class carGenerator : MonoBehaviour
             carAI newCarClass = newCar.GetComponent<carAI>();
             //set car variables
             newCarClass.path = spawnPointsAndPaths[spawn].paths[path].path_transform;
+            newCarClass.spawn = spawn;
             newCarClass.direction = (Direction)path;
             newCarClass.intersectionMaxSpeed = spawnPointsAndPaths[spawn].paths[path].intersectionMaxSpeed;
 

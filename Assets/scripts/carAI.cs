@@ -38,6 +38,7 @@ public class carAI : MonoBehaviour
 {
     public Transform path;
     public Direction direction;
+    public int spawn;
     public float intersectionMaxSpeed;
 
     [SerializeField]
@@ -172,26 +173,27 @@ public class carAI : MonoBehaviour
                 //calculate relative velocity in m/s between car in front and myself
                 float relativeVelocity = carRB.velocity.magnitude - hit.rigidbody.velocity.magnitude;
 
-                //calculate braking distance (speed in km/h / 10)^2 - according to my VKU ;)
-                float brakingDistance = (float)Math.Pow(((relativeVelocity * 3.6f) / 10), 2);
-
-                //we want a security distance, so we add some value to the brakingDistance
-                if (brakingDistance + 10 >= hit.distance)
+                if(needToBreak(relativeVelocity, hit.distance, 10))
                     return -brakingStrenght * Time.deltaTime;
             }
         }
 
+        //check if lane is open or closed
+        if(currentNode == 0 && userAction.lane_stop[spawn] == true)
+        {
+            //get distance between first stop node and actual position
+            float distance = Vector3.Distance(transform.position, nodes[currentNode].position);
+
+            if(needToBreak(carRB.velocity.magnitude, distance, 10))
+                return -brakingStrenght * Time.deltaTime;
+        }
+
         //check max speed for turning at the intersection
-        if(currentNode == 0 && carVelocity > intersectionMaxSpeed){
+        if((currentNode == 0 || currentNode == 1) && carVelocity > intersectionMaxSpeed){
             //get distance between first waypoint and actual position
             float distance = Vector3.Distance(transform.position, nodes[currentNode].position);
 
-            //calculate breaking distance (did not find a formula for breaking not to zero,
-            //so just use the same formula here (feel free to improve :D ))
-            float brakingDistance = (float)Math.Pow(((carRB.velocity.magnitude * 3.6f) / 10), 2);
-
-            //but we dont add a security distance here
-            if (brakingDistance >= distance)
+            if (needToBreak(carRB.velocity.magnitude, distance, 0))
                 return -brakingStrenght * Time.deltaTime;
         }
 
@@ -201,7 +203,6 @@ public class carAI : MonoBehaviour
 
         return accelerationStrenght * Time.deltaTime;
     }
-
 
     private void checkWaypoins()
     {
@@ -231,5 +232,17 @@ public class carAI : MonoBehaviour
             blinkTime = 0;
         }
         blinkTime += Time.deltaTime;
+    }
+
+    private bool needToBreak(float speed, float distance, int security_distance)
+    {
+        //calculate braking distance
+        float brakingDistance = (float)Math.Pow(((speed * 3.6f) / 10), 2);
+
+        //we want a security distance sometimes, so we add some value to the brakingDistance
+        if (brakingDistance + security_distance >= distance)
+            return true;
+
+        return false;
     }
 }
