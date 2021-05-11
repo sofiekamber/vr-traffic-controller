@@ -167,6 +167,7 @@ public class carAI : MonoBehaviour
         RaycastHit hit;
         Ray forwardRay = new Ray(transform.position, forwardVector);
 
+        //shoot raycast to find out if there is an object in my way
         if (Physics.Raycast(forwardRay, out hit)){
             //hit has to have a rigidbody, otherwise ignore it
             if(hit.rigidbody != null){
