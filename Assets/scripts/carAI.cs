@@ -209,8 +209,15 @@ public class carAI : MonoBehaviour
     {
         if(Vector3.Distance(transform.position, nodes[currentNode].position) < 1f){
             if (currentNode != nodes.Count - 1)
+            {
+                // if current node is check_node, increase score
+                if (currentNode == nodes.Count - 2)
+                {
+                    Score.counter++;
+                }
                 //set next waypoint
                 currentNode++;
+            }
             else
                 //or kill when target node is reached
                 Destroy(this.gameObject);
