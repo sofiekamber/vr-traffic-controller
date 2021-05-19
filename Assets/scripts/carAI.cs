@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = System.Random;
 
 public enum Axel
 {
@@ -58,6 +57,15 @@ public class carAI : MonoBehaviour
     GameObject carModel;
     [SerializeField]
     Blinker blinker;
+    [SerializeField]
+    public List<AudioClip> honkSounds;
+
+    public AudioSource honkAudioSource;
+
+    // how long the player can close a street until car honks
+    float timeToHonk = 10f;
+    float counterToHonk = 0f;
+    float nextHonk = 0f;
 
     Rigidbody carRB;
 
@@ -67,6 +75,8 @@ public class carAI : MonoBehaviour
 
     float blinkTime = 0;
     bool isBlinkerOn = false;
+
+    System.Random systemRandom = new System.Random();
 
     void Start()
     {
@@ -84,6 +94,9 @@ public class carAI : MonoBehaviour
         carRB.centerOfMass = centerOfMass;
 
         ChooseRandomColor();
+
+        // choose a random audio clip as honk sound from list
+        honkAudioSource.clip = honkSounds[systemRandom.Next(honkSounds.Count)];
     }
 
     void FixedUpdate()
@@ -93,6 +106,7 @@ public class carAI : MonoBehaviour
         moveCar();
         checkWaypoins();
         Blink();
+        Honk();
     }
 
     private void ChooseRandomColor()
@@ -103,6 +117,21 @@ public class carAI : MonoBehaviour
         materials[2].color = UnityEngine.Random.ColorHSV(0f, 1f, 0.5f, 1f, 0f, 0.75f);
         // we have to reassign the whole array
         carModel.GetComponent<MeshRenderer>().materials = materials;
+
+        
+    }
+
+    private void Honk()
+    {
+        if (counterToHonk >= timeToHonk)
+        {
+            if (counterToHonk >= nextHonk)
+            {
+                honkAudioSource.Play();
+                // wait from 3 to 7 seconds until it honks again
+                nextHonk = UnityEngine.Random.Range(counterToHonk + 3f, counterToHonk + 7f);
+            }
+        }
     }
 
     private void wheelTurn()
@@ -182,15 +211,24 @@ public class carAI : MonoBehaviour
         //check if lane is open or closed
         if(currentNode == 0 && userAction.lane_stop[spawn] == true)
         {
+            // count time until car starts to honk
+            counterToHonk += Time.deltaTime;
+
             //get distance between first stop node and actual position
             float distance = Vector3.Distance(transform.position, nodes[currentNode].position);
 
             if(needToBreak(carRB.velocity.magnitude, distance, 10))
+            {
                 return -brakingStrenght * Time.deltaTime;
+            }
+        } else
+        {
+            // reset counter because lane is now open or it passed node 0
+            counterToHonk = 0f;
         }
 
         //check max speed for turning at the intersection
-        if((currentNode == 0 || currentNode == 1) && carVelocity > intersectionMaxSpeed){
+        if ((currentNode == 0 || currentNode == 1) && carVelocity > intersectionMaxSpeed){
             //get distance between first waypoint and actual position
             float distance = Vector3.Distance(transform.position, nodes[currentNode].position);
 
