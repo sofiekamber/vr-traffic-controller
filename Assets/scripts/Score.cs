@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class Score : MonoBehaviour
@@ -7,6 +8,6 @@ public class Score : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GetComponent<TextMesh>().text = counter.ToString();
+        GetComponent<TextMeshPro>().text = counter.ToString();
     }
 }
