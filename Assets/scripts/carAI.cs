@@ -61,6 +61,7 @@ public class carAI : MonoBehaviour
     public List<AudioClip> honkSounds;
 
     public AudioSource honkAudioSource;
+    public GameObject carLights;
 
     // how long the player can close a street until car honks
     float timeToHonk = 10f;
@@ -97,6 +98,9 @@ public class carAI : MonoBehaviour
 
         // choose a random audio clip as honk sound from list
         honkAudioSource.clip = honkSounds[systemRandom.Next(honkSounds.Count)];
+
+        // turn on car lights when there is no day light
+        carLights.SetActive(!OptionsMenu.IsDayLight);
     }
 
     void FixedUpdate()
