@@ -6,9 +6,11 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Valve.VR.Extras;
 
-public class SceneHandler : MonoBehaviour
+public class UserInputMenu : MonoBehaviour
 {
     public SteamVR_LaserPointer laserPointer;
+
+    public Button NewGameButton;
 
     void Awake()
     {
@@ -19,25 +21,26 @@ public class SceneHandler : MonoBehaviour
 
     public void PointerClick(object sender, PointerEventArgs e)
     {
-    if (e.target.name == "Options")
+    if (e.target.name == "Newgame")
         {
             Debug.Log("Button was clicked");
+            NewGameButton.onClick.Invoke();
         }
     }
 
     public void PointerInside(object sender, PointerEventArgs e)
     {
-    if (e.target.name == "Options")
+    if (e.target.name == "NewGame")
         {
             Debug.Log("Button was entered");
-        
+
         }
     }
 
     public void PointerOutside(object sender, PointerEventArgs e)
     {
 
-        if (e.target.name == "Options")
+        if (e.target.name == "NewGame")
         {
             Debug.Log("Button was exited");
         }
