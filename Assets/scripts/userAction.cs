@@ -11,10 +11,12 @@ public class userAction : MonoBehaviour
     public void UpGo()
     {
         lane_stop[0] = false;
+        Debug.Log("lane0");
     }
     public void UpStop()
     {
         lane_stop[0] = true;
+        Debug.Log("lane0");
     }
 
     // Actions for LEFT lane
