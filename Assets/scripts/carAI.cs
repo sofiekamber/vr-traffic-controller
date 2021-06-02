@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum Axel
 {
@@ -294,5 +295,16 @@ public class carAI : MonoBehaviour
             return true;
 
         return false;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.name.StartsWith("Car"))
+        {
+            // load main menu
+            SceneManager.LoadScene(0);
+            // reset counter
+            Score.counter = 0;
+        }
     }
 }
