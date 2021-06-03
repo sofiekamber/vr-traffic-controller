@@ -8,11 +8,11 @@ public class OptionsMenu : MonoBehaviour
 
     public static bool IsDayLight = true;
 
-    public TMPro.TMP_Dropdown mode;
+    public Button dayButton;
 
     // Update is called once per frame
     void Update()
     {
-        IsDayLight = mode.value == 0;
+        IsDayLight = !dayButton.interactable;
     }
 }

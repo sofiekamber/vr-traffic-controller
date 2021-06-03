@@ -10,8 +10,6 @@ public class UserInputMenu : MonoBehaviour
 {
     public SteamVR_LaserPointer laserPointer;
 
-    public Button NewGameButton;
-
     void Awake()
     {
         laserPointer.PointerIn += PointerInside;
@@ -21,28 +19,31 @@ public class UserInputMenu : MonoBehaviour
 
     public void PointerClick(object sender, PointerEventArgs e)
     {
-    if (e.target.name == "Newgame")
+        Button btn = e.target.GetComponent<Button>();
+        if (e.target.name.StartsWith("btn_") && btn.interactable)
         {
-            Debug.Log("Button was clicked");
-            NewGameButton.onClick.Invoke();
+            btn.onClick.Invoke();
         }
     }
 
     public void PointerInside(object sender, PointerEventArgs e)
     {
-    if (e.target.name == "NewGame")
+        Button btn = e.target.GetComponent<Button>();
+        if (e.target.name.StartsWith("btn_") && btn.interactable)
         {
-            Debug.Log("Button was entered");
-
+            btn.GetComponent<Image>().color = Color.gray;
+        } else if (e.target.name.StartsWith("btn_"))
+        {
+            btn.GetComponent<Image>().color = Color.white;
         }
     }
 
     public void PointerOutside(object sender, PointerEventArgs e)
     {
-
-        if (e.target.name == "NewGame")
+        Button btn = e.target.GetComponent<Button>();
+        if (e.target.name.StartsWith("btn_") && btn.interactable)
         {
-            Debug.Log("Button was exited");
+            btn.GetComponent<Image>().color = Color.white;
         }
     }
 }
