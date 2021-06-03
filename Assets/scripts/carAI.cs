@@ -81,6 +81,8 @@ public class carAI : MonoBehaviour
 
     System.Random systemRandom = new System.Random();
 
+
+
     void Start()
     {
         //get all nodes from path
@@ -302,10 +304,15 @@ public class carAI : MonoBehaviour
     {
         if (collision.gameObject.name.StartsWith("Car"))
         {
+            
+            //GameObject gameOverOverlay = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            //gameOverOverlay.transform.localScale = new Vector3(5, 5, 5);
+            //gameOverOverlay.GetComponent<MeshRenderer>().material.color = new Color(1.0f, 1.0f,1.0f, 1.0f);
             //freeeze game
             Time.timeScale = 0;
             //wait 2 seconds
             Thread.Sleep(2000);
+  
             //unfreeze game
             Time.timeScale = 1;
             // load main menu
