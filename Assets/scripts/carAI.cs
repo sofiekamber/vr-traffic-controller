@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -301,6 +302,12 @@ public class carAI : MonoBehaviour
     {
         if (collision.gameObject.name.StartsWith("Car"))
         {
+            //freeeze game
+            Time.timeScale = 0;
+            //wait 2 seconds
+            Thread.Sleep(2000);
+            //unfreeze game
+            Time.timeScale = 1;
             // load main menu
             SceneManager.LoadScene(0);
             // reset counter
