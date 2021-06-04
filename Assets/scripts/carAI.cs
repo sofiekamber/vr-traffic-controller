@@ -67,7 +67,7 @@ public class carAI : MonoBehaviour
     public AudioSource honkAudioSource;
     public GameObject carLights;
 
-    // how long the player can close a street until car honks
+    // time until the car starts honking after stopping
     float timeToHonk = 10f;
     float counterToHonk = 0f;
     float nextHonk = 0f;
@@ -133,6 +133,17 @@ public class carAI : MonoBehaviour
 
     private void Honk()
     {
+        // if car stands still, increase counter to honk
+        if (carRB.velocity.magnitude < 0.1)
+        {
+            // count time until car starts to honk
+            counterToHonk += Time.deltaTime;
+        } else
+        {
+            // reset counter
+            counterToHonk = 0f;
+        }
+
         if (counterToHonk >= timeToHonk)
         {
             if (counterToHonk >= nextHonk)
@@ -221,9 +232,6 @@ public class carAI : MonoBehaviour
         //check if lane is open or closed
         if(currentNode == 0 && userAction.lane_stop[spawn] == true)
         {
-            // count time until car starts to honk
-            counterToHonk += Time.deltaTime;
-
             //get distance between first stop node and actual position
             float distance = Vector3.Distance(transform.position, nodes[currentNode].position);
 
@@ -231,10 +239,6 @@ public class carAI : MonoBehaviour
             {
                 return -brakingStrenght * Time.deltaTime;
             }
-        } else
-        {
-            // reset counter because lane is now open or it passed node 0
-            counterToHonk = 0f;
         }
 
         //check max speed for turning at the intersection
