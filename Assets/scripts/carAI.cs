@@ -300,25 +300,32 @@ public class carAI : MonoBehaviour
         return false;
     }
 
+    private IEnumerator WaitTimeGameOver()
+    {
+ 
+        //yield on a new YieldInstruction that waits for 5 seconds.
+        yield return new WaitForSecondsRealtime(5);
+        //unfreeze game
+        Time.timeScale = 1;
+        // load main menu
+        SceneManager.LoadScene(0);
+        // reset counter
+        Score.counter = 0;
+
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.name.StartsWith("Car"))
         {
             
-            //GameObject gameOverOverlay = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            //gameOverOverlay.transform.localScale = new Vector3(5, 5, 5);
-            //gameOverOverlay.GetComponent<MeshRenderer>().material.color = new Color(1.0f, 1.0f,1.0f, 1.0f);
+
             //freeeze game
             Time.timeScale = 0;
-            //wait 2 seconds
-            Thread.Sleep(2000);
-  
-            //unfreeze game
-            Time.timeScale = 1;
-            // load main menu
-            SceneManager.LoadScene(0);
-            // reset counter
-            Score.counter = 0;
+
+            //wait 5 seconds
+            StartCoroutine(WaitTimeGameOver());
+
         }
     }
 }
