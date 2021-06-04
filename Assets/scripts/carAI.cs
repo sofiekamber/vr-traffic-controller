@@ -62,6 +62,8 @@ public class carAI : MonoBehaviour
     [SerializeField]
     public List<AudioClip> honkSounds;
 
+ 
+
     public AudioSource honkAudioSource;
     public GameObject carLights;
 
@@ -81,7 +83,7 @@ public class carAI : MonoBehaviour
 
     System.Random systemRandom = new System.Random();
 
-
+    
 
     void Start()
     {
@@ -300,32 +302,13 @@ public class carAI : MonoBehaviour
         return false;
     }
 
-    private IEnumerator WaitTimeGameOver()
-    {
- 
-        //yield on a new YieldInstruction that waits for 5 seconds.
-        yield return new WaitForSecondsRealtime(5);
-        //unfreeze game
-        Time.timeScale = 1;
-        // load main menu
-        SceneManager.LoadScene(0);
-        // reset counter
-        Score.counter = 0;
 
-    }
 
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.name.StartsWith("Car"))
         {
-            
-
-            //freeeze game
-            Time.timeScale = 0;
-
-            //wait 5 seconds
-            StartCoroutine(WaitTimeGameOver());
-
+            GameObject.FindGameObjectWithTag("GameOver").GetComponent<GameOver>().finito();
         }
     }
 }
