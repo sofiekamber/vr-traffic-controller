@@ -22,7 +22,11 @@ public class GameOver : MonoBehaviour
         SceneManager.LoadScene(0);
         // reset counter
         Score.counter = 0;
-
+        // reset lanes
+        for (int i = 0; i < userAction.lane_stop.Length; i++)
+        {
+            userAction.lane_stop[i] = false;
+        }
     }
 
     public void finito()
