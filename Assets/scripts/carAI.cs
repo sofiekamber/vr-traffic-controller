@@ -62,8 +62,6 @@ public class carAI : MonoBehaviour
     [SerializeField]
     public List<AudioClip> honkSounds;
 
- 
-
     public AudioSource honkAudioSource;
     public GameObject carLights;
 
@@ -99,6 +97,9 @@ public class carAI : MonoBehaviour
         //Set center of mass for better physics (prevent flipping)
         carRB = GetComponent<Rigidbody>();
         carRB.centerOfMass = centerOfMass;
+
+        // set initial speed
+        carRB.velocity = transform.rotation * Vector3.forward * maxVelocity / 3.6f;
 
         ChooseRandomColor();
 
