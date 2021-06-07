@@ -64,6 +64,7 @@ public class carAI : MonoBehaviour
 
     public AudioSource honkAudioSource;
     public GameObject carLights;
+    public AudioSource crashAudioSource;
 
     // time until the car starts honking after stopping
     float timeToHonk = 10f;
@@ -219,7 +220,7 @@ public class carAI : MonoBehaviour
         Ray forwardRay = new Ray(transform.position, forwardVector);
 
         //shoot raycast to find out if there is an object in my way
-        if (Physics.Raycast(forwardRay, out hit)){
+        if (currentNode == 0 && Physics.Raycast(forwardRay, out hit)){
             //hit has to have a rigidbody, otherwise ignore it
             if(hit.rigidbody != null){
                 //calculate relative velocity in m/s between car in front and myself
@@ -243,7 +244,7 @@ public class carAI : MonoBehaviour
         }
 
         //check max speed for turning at the intersection
-        if ((currentNode == 0 || currentNode == 1) && carVelocity > intersectionMaxSpeed){
+        if ((currentNode < 3) && carVelocity > intersectionMaxSpeed){
             //get distance between first waypoint and actual position
             float distance = Vector3.Distance(transform.position, nodes[currentNode].position);
 
@@ -313,6 +314,7 @@ public class carAI : MonoBehaviour
     {
         if (collision.gameObject.name.StartsWith("Car"))
         {
+            crashAudioSource.Play();
             GameObject.FindGameObjectWithTag("GameOver").GetComponent<GameOver>().finito();
         }
     }
